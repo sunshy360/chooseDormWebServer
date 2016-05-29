@@ -6,8 +6,8 @@ import MySQLdb
 conn= MySQLdb.connect(
         host='localhost',
         port = 3306,
-        user='root',
-        passwd='123123',
+        user='choosedorm',
+        passwd='choosedorm',
         db ='choosedorm',
         )
 cur = conn.cursor()
