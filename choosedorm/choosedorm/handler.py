@@ -29,6 +29,7 @@ def choosedorm(request):
 	cur = conn.cursor()
 
 	if request.method == 'POST':
+                print request.body
 		chooseInfo = json.loads(request.body)
 		if chooseInfo['random']!=finalRandom:
 			print "不许用脚本"
@@ -122,7 +123,7 @@ def GET():
 			'member4' : item[5]
 		}
 		jsonList.append(jsonTmp)
-	
+	jsonList = json.dumps(jsonList)
 	commitandclose()
 	return HttpResponse(jsonList)
 

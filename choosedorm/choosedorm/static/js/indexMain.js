@@ -3,7 +3,7 @@
 // 以 "/" 开始.
 // 包含 URL 协议, 如 "http:" or "https:".
 requirejs.config({
-    baseUrl: 'node_modules',
+    baseUrl: '/static/node_modules',
     paths: {
         items: '../js/items',
         'jquery': 'jquery/dist/jquery.min',
@@ -19,7 +19,7 @@ requirejs.config({
         
 //这里注意 requirejs()里加载的 模块 不是按顺序的！
 //（当然，异步下有可能按顺序加载完成，但是还是应该把 deps 写上，以防出现问题）
-requirejs(['items/index', 'items/ie10', 'jquery', 'bootstrap'], function (indexPage){
+requirejs(['items/index', 'items/ie10', 'items/ajaxSetup', 'jquery', 'bootstrap'], function (indexPage){
     indexPage.initHTML();
     indexClickSet = indexPage.clickSet; 
 });

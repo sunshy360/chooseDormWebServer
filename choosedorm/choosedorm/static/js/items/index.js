@@ -23,7 +23,7 @@ define(["jquery", "underscore"], function ($, _) {
             simple: /\b\d{3}\b/
         }
     };
-
+    var corresponding =  ["dormID","member1","member2","member3","member4","Remark"];
     var ConvertMark = {
         prefix: "._.",
         toName: function (id) {
@@ -148,13 +148,17 @@ define(["jquery", "underscore"], function ($, _) {
         return num;
     };
 
-    var initInforShow = function (students) {
+    var initInforShow = function (students,correspondng) {
         //这里是给.html 文件，还是循环可扩展性好。   至于 和表格项对应应该是.html文件考虑的事情
         var str = "<tr>";
+	for(var i=0; i < corresponding.length; i++)
+	{
+	    str = str + "<td><h5>" + students[corresponding[i]] + "</h5></td>" 
+	}	
 
-        for (var name in students) {
-            str = str + "<td><h5>" + students[name] + "</h5></td>";
-        }
+        //for (var name in students) {
+        //    str = str + "<td><h5>" + students[name] + "</h5></td>";
+        //}
 
         str = str + "<td>" +
             "<button type=\"button\" class=\"btn btn-primary\" onclick=\"indexClickSet.joinBtn('" +
@@ -248,7 +252,6 @@ define(["jquery", "underscore"], function ($, _) {
         // 改成同步，就无所谓了, 这里的写法， 同步异步都OK
         var state = CheckResult["System"].ERROR;
         $.ajax({
-            url: 'server/write.php',
             data: submitStudents,
             type: 'POST',
             async: false,
@@ -289,7 +292,8 @@ define(["jquery", "underscore"], function ($, _) {
         return CheckResult["Search"].SUCCEED;
     };
 
-    var formatDBInfor = function (students, simplfy = true) {
+    var formatDBInfor = function (students, simplfy) {
+	simplfy = simplfy || true;
         var stuDeplicate = _.clone(students);
 
         for (var name in StudentsAttribute) {
@@ -304,13 +308,13 @@ define(["jquery", "underscore"], function ($, _) {
         return stuDeplicate;
     }
 
-    var receiveJSON = function (demand = "") {
-        $.getJSON("server/dormitory.json").done(function (data) {
+    var receiveJSON = function (demand) {
+        $.getJSON("/choosedorm").done(function (data) {
             $.each(data, function (index, dbstudents) {
                 if (demand) {
                     readInfor(formatDBInfor(dbstudents, false), demand);
                 }
-                initInforShow(formatDBInfor(dbstudents, true));
+                initInforShow(formatDBInfor(dbstudents, true),corresponding);
             });
         }).fail(function (xhr, status) {
             alert('行为: ' + '从服务器读入数据 ' + '失败: ' + xhr.status + ', 原因: ' + status);

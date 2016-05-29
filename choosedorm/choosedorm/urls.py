@@ -19,6 +19,6 @@ from handler import choosedorm
 import dorm_views 
 
 urlpatterns = [ 
-    url(r'^choosedorm/', choosedorm),
+    url(r'^choosedorm/$', choosedorm),
     url(r'^$', dorm_views.index),
 ]
