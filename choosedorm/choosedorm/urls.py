@@ -16,7 +16,9 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from handler import choosedorm
+import dorm_views 
 
 urlpatterns = [ 
     url(r'^choosedorm/', choosedorm),
+    url(r'^$', dorm_views.index),
 ]

@@ -21,9 +21,10 @@ def choosedorm(request):
 	conn= MySQLdb.connect(
 			host='localhost',
 			port = 3306,
-			user='root',
-			passwd='123123',
+			user='choosedorm',
+			passwd='choosedorm',
 			db ='choosedorm',
+			charset='utf8',
 			)
 	cur = conn.cursor()
 
@@ -38,31 +39,34 @@ def choosedorm(request):
 def POST(chooseInfo):
 
 	#jugde logical
-	groupitem = cur.execute("select * from GroupTable where captainID="+chooseInfo['id']+"FOR UPDATE")
+	groupitem = cur.execute("select * from GroupTable where captainID="+chooseInfo['id']+"")
 	if groupitem==0:
 		commitandclose()
-		return HttpResponse("无该组信息".decode('utf8').encode("gbk"))
+		return HttpResponse("无该组信息".decode('utf8').encode("utf8"))
 
-	groupInfo = cur.fetchmany(groupitem)[0]
+	groupInfos = cur.fetchmany(groupitem)
+        print groupInfos
+	groupInfo = groupInfos[0]
 
-	if chooseInfo['captain'] != groupInfo[1].decode('gbk'):
+	#if chooseInfo['captain'] != groupInfo[1].decode('utf8'):
+	if chooseInfo['captain'] != groupInfo[1]:
 		commitandclose()
-		return HttpResponse("队长信息有误".decode('utf8').encode("gbk"))
+		return HttpResponse("队长信息有误".decode('utf8').encode("utf8"))
 	if groupInfo[6]!=-1:
 		commitandclose()
-		return HttpResponse("此队已选过，不能再更改".decode('utf8').encode("gbk"))
+		return HttpResponse("此队已选过，不能再更改".decode('utf8').encode("utf8"))
 
 	#choose logical
-	dormitem = cur.execute("select * from DormTable where dormID="+chooseInfo['dorm']+"FOR UPDATE")
+	dormitem = cur.execute("select * from DormTable where dormID="+chooseInfo['dorm']+"")
 	if dormitem==0:
 		commitandclose()
-		return HttpResponse("无此宿舍".decode('utf8').encode("gbk"))
+		return HttpResponse("无此宿舍".decode('utf8').encode("utf8"))
 
 	dormInfo = cur.fetchmany(dormitem)[0]
 
 	if groupInfo[2] > dormInfo[1]:
 		commitandclose()
-		return HttpResponse("此宿舍床位不够".decode('utf8').encode("gbk"))
+		return HttpResponse("此宿舍床位不够".decode('utf8').encode("utf8"))
 
 	#write dorm info
 	#4 member, write directly
@@ -91,7 +95,7 @@ def POST(chooseInfo):
 	dormInfo = cur.fetchmany(dormitem)[0]
 
 	commitandclose()
-	return HttpResponse("选择成功，该宿舍信息为：\n".decode('utf8').encode("gbk")+str(dormInfo[0])+" "+dormInfo[2]+" "+dormInfo[3]+" "+dormInfo[4]+" "+dormInfo[5])
+	return HttpResponse("OK")
 
 def GET():
 
