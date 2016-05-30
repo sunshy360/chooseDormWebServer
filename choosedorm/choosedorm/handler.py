@@ -42,43 +42,49 @@ def choosedorm(request):
 def POST(chooseInfo):
         try:
 	        #jugde logical
-	        groupitem = cur.execute("select * from GroupTable where captainID="+chooseInfo['id']+"")
+	        groupitem = cur.execute("select * from GroupTable where captainID="+str(chooseInfo['id'])+" for update")
 	        if groupitem==0:
 	        	commitandclose()
-                        # Error Code: 401: 无该组信息
-	        	return HttpResponse("401")
+                        # Error Code: 21: 无该组信息
+	        	return HttpResponse("21")
 
-	        groupInfos = cur.fetchmany(groupitem)
+                try:
+	                groupInfos = cur.fetchmany(groupitem)
+                except ProgrammingError as ex:
+                        if cursor:
+                            print "\n".join(cursor.messages) 
+                        else:
+                            print "\n".join(self.db.messages)
 
                 print groupInfos
-                # Error Code: 501: 并发错误
+                # Error Code: 26: 并发错误
                 if len(groupInfos) != 1:
-                        return HttpResponse("501")
+                        return HttpResponse("25")
 	        groupInfo = groupInfos[0]
 
 	        #if chooseInfo['captain'] != groupInfo[1].decode('utf8'):
 	        if chooseInfo['captain'] != groupInfo[1]:
 	        	commitandclose()
-                        # Error Code 402: 队长信息有误
-	        	return HttpResponse("402")
+                        # Error Code 22: 队长信息有误
+	        	return HttpResponse("22")
 	        if groupInfo[6]!=-1:
 	        	commitandclose()
-                        # Error Code: 403:此队已经选过 
-	        	return HttpResponse("403")
+                        # Error Code: 23:此队已经选过 
+	        	return HttpResponse("23")
 
 	        #choose logical
-	        dormitem = cur.execute("select * from DormTable where dormID="+str(chooseInfo['dorm']))
+	        dormitem = cur.execute("select * from DormTable where dormID="+str(chooseInfo['dorm']) + " for update")
 	        if dormitem==0:
 	        	commitandclose()
-                        # Error Code: 404:无此宿舍
-	        	return HttpResponse("404")
+                        # Error Code: 24:无此宿舍
+	        	return HttpResponse("24")
 
 	        dormInfo = cur.fetchmany(dormitem)[0]
 
 	        if groupInfo[2] > dormInfo[1]:
 	        	commitandclose()
-                        # Error Code: 405:此宿舍床位不够
-	        	return HttpResponse("405")
+                        # Error Code: 25:此宿舍床位不够
+	        	return HttpResponse("25")
 
 	        #write dorm info
 	        #4 member, write directly
@@ -108,10 +114,10 @@ def POST(chooseInfo):
 
 	        commitandclose()
                 print "OK!OK!OK!OK!OK!OK!"
-	        return HttpResponse("200")
+	        return HttpResponse("20")
         except Exception,e:
                 traceback.print_exc()
-                return HttpResponse("501")
+                return HttpResponse("26")
 
 def GET():
 
