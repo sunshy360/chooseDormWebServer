@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 import MySQLdb
 import json
+import traceback
 
 finalRandom = 1
 #receive json data from web
@@ -65,7 +66,7 @@ def POST(chooseInfo):
 	        	return HttpResponse("403")
 
 	        #choose logical
-	        dormitem = cur.execute("select * from DormTable where dormID="+chooseInfo['dorm']+"")
+	        dormitem = cur.execute("select * from DormTable where dormID="+str(chooseInfo['dorm']))
 	        if dormitem==0:
 	        	commitandclose()
                         # Error Code: 404:无此宿舍
@@ -81,7 +82,7 @@ def POST(chooseInfo):
 	        #write dorm info
 	        #4 member, write directly
 	        if groupInfo[2]==4:
-	        	s = "update DormTable SET remainBed=%s,bed1=%s,bed2=%s,bed3=%s,bed4=%s where dormID="+chooseInfo['dorm']
+	        	s = "update DormTable SET remainBed=%s,bed1=%s,bed2=%s,bed3=%s,bed4=%s where dormID="+str(chooseInfo['dorm'])
 	        	cur.execute(s,(str(dormInfo[1]-groupInfo[2]),groupInfo[1],groupInfo[3],groupInfo[4],groupInfo[5]))
 	        #less than 4 member, combine and write
 	        else:
@@ -94,19 +95,21 @@ def POST(chooseInfo):
 	        		newMemList.append(groupInfo[3+j])
 	        	for k in range(0,4-newMemSum):
 	        		newMemList.append("")
-	        	s = "update DormTable SET remainBed=%s,bed1=%s,bed2=%s,bed3=%s,bed4=%s where dormID="+chooseInfo['dorm']
+	        	s = "update DormTable SET remainBed=%s,bed1=%s,bed2=%s,bed3=%s,bed4=%s where dormID="+str(chooseInfo['dorm'])
 	        	#cur.execute("SET NAMES utf8;")
 	        	cur.execute(s,(str(dormInfo[1]-groupInfo[2]),newMemList[0],newMemList[1],newMemList[2],newMemList[3]))
 
 	        cur.execute("update GroupTable SET dormID="+str(dormInfo[0])+" where captainID="+chooseInfo['id'])
 
 	        #search dorm info
-	        dormitem = cur.execute("select * from DormTable where dormID="+chooseInfo['dorm'])
+	        dormitem = cur.execute("select * from DormTable where dormID="+str(chooseInfo['dorm']))
 	        dormInfo = cur.fetchmany(dormitem)[0]
 
 	        commitandclose()
+                print "OK!OK!OK!OK!OK!OK!"
 	        return HttpResponse("200")
         except Exception,e:
+                traceback.print_exc()
                 return HttpResponse("501")
 
 def GET():

@@ -49,9 +49,9 @@ define(["jquery", "underscore"], function ($, _) {
             Range: _.range(10, 14)
         },
         System: {
-            ERROR: 20,
-            SUCCEED: 21,
-            WARN: 22,
+            SUCCEED: 20,
+	    ERROR1:21,
+            ERROR2: 22,
             Range: _.range(20, 23)
         }
     };
@@ -104,8 +104,10 @@ define(["jquery", "underscore"], function ($, _) {
             msg = "输入不合法，输入学号格式不正确！";
         if (state == CheckResult['System'].SUCCEED)
             msg = "写入数据成功，请查看表格确定！";
-        if (state == CheckResult['System'].ERROR)
-            msg = "写入数据库失败！"
+        if (state == CheckResult['System'].ERROR1)
+            msg = "无该组信息";
+	if (state == CheckResult['System'].ERROR2)
+	    msg = "并发错误";
         if (!msg)
             msg = "未知反馈信息!"
 
@@ -252,12 +254,13 @@ define(["jquery", "underscore"], function ($, _) {
         // 改成同步，就无所谓了, 这里的写法， 同步异步都OK
         var state = CheckResult["System"].ERROR;
         $.ajax({
-            data: submitStudents,
+            data: JSON.stringify(submitStudents),
+            url:'choosedorm/',
             type: 'POST',
             async: false,
             dataType: 'json'
         }).done(function (result) {
-            state = result;
+            state = result == 200? 20:result < 500? 21:22;
             log(state);
         }).fail(function (xhr, status) {
             log(state);
