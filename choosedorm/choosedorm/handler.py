@@ -34,6 +34,7 @@ def choosedorm(request):
 		chooseInfo = json.loads(request.body)
 		if chooseInfo['random']!=finalRandom:
 			print "不许用脚本"
+                        return HttpResponse("400")
 		return POST(chooseInfo)
 	elif request.method == 'GET':
 		return GET()
