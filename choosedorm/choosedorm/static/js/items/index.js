@@ -19,8 +19,8 @@ define(["jquery", "underscore"], function ($, _) {
 
     var Pattern = {
         DormitoryNum: {
-            all: /^\s*\d{3}\s*$/,
-            simple: /\b\d{3}\b/
+            all: /^\s*\d{4}\s*$/,
+            simple: /\b\d{4}\b/
         }
     };
     var corresponding =  ["dormID","member1","member2","member3","member4","Remark"];
@@ -52,7 +52,11 @@ define(["jquery", "underscore"], function ($, _) {
             SUCCEED: 20,
 	    ERROR1:21,
             ERROR2: 22,
-            Range: _.range(20, 23)
+ 	    ERROR3:23,
+	    ERROE4:24,
+            ERROR5:25,
+            ERROR6:26,
+            Range: _.range(20, 27)
         }
     };
     var submitId;
@@ -107,7 +111,15 @@ define(["jquery", "underscore"], function ($, _) {
         if (state == CheckResult['System'].ERROR1)
             msg = "无该组信息";
 	if (state == CheckResult['System'].ERROR2)
-	    msg = "并发错误";
+  	    msg = "队长信息有误，请检查";
+	if (state == CheckResult['System'].ERROR3)
+	    msg = "此队已经选过";
+	if (state == CheckResult['System'].ERROR4)
+	    msg = "无此宿舍";
+	if (state == CheckResult['System'].ERROR5)
+            msg = "所选宿舍床位不够";
+	if (state == CheckResult['System'].ERROR6)
+	    msg = "服务器压力太大，重新提交";
         if (!msg)
             msg = "未知反馈信息!"
 
@@ -150,7 +162,7 @@ define(["jquery", "underscore"], function ($, _) {
         return num;
     };
 
-    var initInforShow = function (students,correspondng) {
+    var initInforShow = function (students) {
         //这里是给.html 文件，还是循环可扩展性好。   至于 和表格项对应应该是.html文件考虑的事情
         var str = "<tr>";
 	for(var i=0; i < corresponding.length; i++)
@@ -242,7 +254,7 @@ define(["jquery", "underscore"], function ($, _) {
     var writeInfor = function () {
         formatWriteInfor();
         collectWriteInfor();
-        submitStudents["random"] = 1;
+        submitStudents["random"] = 666111;
     };
 
     var simplifySearchInfor = function (value) {
@@ -250,7 +262,7 @@ define(["jquery", "underscore"], function ($, _) {
     };
 
     var submitResult = function () {
-        //如果是异步执行 将log()直接写在 fail 里， 以防异步函数还未得到结果， 后面的先向用户显示 出错。
+        //如果是异步执行 并发错误log()直接写在 fail 里， 以防异步函数还未得到结果， 后面的先向用户显示 出错。
         // 改成同步，就无所谓了, 这里的写法， 同步异步都OK
         var state = CheckResult["System"].ERROR;
         $.ajax({
@@ -260,7 +272,7 @@ define(["jquery", "underscore"], function ($, _) {
             async: false,
             dataType: 'json'
         }).done(function (result) {
-            state = result == 200? 20:result < 500? 21:22;
+            state = result;
             log(state);
         }).fail(function (xhr, status) {
             log(state);
@@ -317,7 +329,7 @@ define(["jquery", "underscore"], function ($, _) {
                 if (demand) {
                     readInfor(formatDBInfor(dbstudents, false), demand);
                 }
-                initInforShow(formatDBInfor(dbstudents, true),corresponding);
+                initInforShow(formatDBInfor(dbstudents, true));
             });
         }).fail(function (xhr, status) {
             alert('行为: ' + '从服务器读入数据 ' + '失败: ' + xhr.status + ', 原因: ' + status);

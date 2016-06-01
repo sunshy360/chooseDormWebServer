@@ -5,7 +5,7 @@ import MySQLdb
 import json
 import traceback
 
-finalRandom = 1
+finalRandom = 666111
 #receive json data from web
 data = {
     'id' : '3115034018',
@@ -42,7 +42,7 @@ def choosedorm(request):
 def POST(chooseInfo):
         try:
 	        #jugde logical
-	        groupitem = cur.execute("select * from GroupTable where captainID="+str(chooseInfo['id'])+" for update")
+	        groupitem = cur.execute("select * from GroupTable where captainID="+str(chooseInfo['id'])+"")
 	        if groupitem==0:
 	        	commitandclose()
                         # Error Code: 21: 无该组信息
@@ -73,7 +73,7 @@ def POST(chooseInfo):
 	        	return HttpResponse("23")
 
 	        #choose logical
-	        dormitem = cur.execute("select * from DormTable where dormID="+str(chooseInfo['dorm']) + " for update")
+	        dormitem = cur.execute("select * from DormTable where dormID="+str(chooseInfo['dorm']) + "")
 	        if dormitem==0:
 	        	commitandclose()
                         # Error Code: 24:无此宿舍
