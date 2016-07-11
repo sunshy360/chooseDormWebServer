@@ -3,15 +3,11 @@
 
 Environment：
 
-Ubuntu14.04
-
-Python2.7
-
-Django1.9.1
+Ubuntu14.04 + Python2.7 + Django1.9.1
 
 2016.6月初上线
 
-2016.7update
+2016.7update：
 
 共有150人同时抢购，系统运行无异常。
 
